@@ -1,0 +1,5 @@
+---
+- name: "Installing cowsay"
+  ansible.builtin.package:
+    name: cowsay
+    state: present
