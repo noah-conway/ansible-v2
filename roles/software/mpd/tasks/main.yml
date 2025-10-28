@@ -1,0 +1,14 @@
+---
+- name: "Installing mpd related packages on Arch-based distributions"
+  become: true
+  community.general.pacman:
+    name:
+      - mpd
+      - mpc
+      - ncmpcpp
+      - beets
+    state: present
+  when: ansible_distribution == "Archlinux"
+
+# Setting up config file
+
