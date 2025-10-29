@@ -1,0 +1,8 @@
+# XDG Directory Specifications
+XDG_CONFIG_HOME: "~/.config"
+XDG_STATE_HOME: "~/.local/state"
+
+
+# Personal home directory specifications
+USER_MEDIA_ROOT: "~/media"
+
