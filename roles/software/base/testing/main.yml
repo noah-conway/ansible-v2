@@ -1,0 +1,7 @@
+---
+- name: "testing include-role"
+  ansible.builtin.include_role:
+    name: software/cowsay
+
+
+
