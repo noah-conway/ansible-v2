@@ -1,0 +1,65 @@
+---
+- name: "Ensuring target_user is defined and present"
+  ansible.builtin.assert:
+    that:
+      - target_user is defined
+      - target_user is not none
+
+- name: "Creating MPD directory in XDG_CONFIG_HOME"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ mpd_root_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+
+- name: "Creating MPD state directory in XDG_STATE_HOME"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ XDG_STATE_HOME }}/mpd"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+
+- name: "Copying mpd.conf template"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.template:
+    src: templates/mpd.conf.j2
+    dest: "{{ mpd_root_dir }}/mpd.conf"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0644'
+
+- name: "Creating mpd files and directories"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode: " {{ item.mode }}"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+  loop:
+    - path: "{{ mpd_root_dir }}/databate"
+      state: touch
+      mode: '0644'
+    - path: "{{ mpd_root_dir }}/playlists"
+      state: directory
+      mode: '0755'
+    - path: "{{ mpd_root_dir }}/pid"
+      state: touch
+      mode: '0644'
+    - path: "{{ XDG_STATE_HOME }}/mpd/state"
+      state: touch
+      mode: '0644'
+    - path: "{{ mpd_root_dir }}/sticker.sql"
+      state: touch
+      mode: '0644'
+
+
+

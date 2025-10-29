@@ -10,5 +10,7 @@
     state: present
   when: ansible_distribution == "Archlinux"
 
-# Setting up config file
-
+- name: "Setting up mpd in a per-user configuration"
+  ansible.builtin.include_tasks:
+    file: per-user.yml
+  when: mode == "user"
