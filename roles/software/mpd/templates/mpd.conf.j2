@@ -2,13 +2,13 @@
 db_file            "{{ mpd_root_dir }}/database"
 
 # If running mpd using systemd, delete this line to log directly to systemd.
-log_file           "syslog"
+#log_file           "syslog"
 
 # The music directory is by default the XDG directory, uncomment to amend and choose a different directory
-#music_directory    "{{ music_dir }}"
+music_directory    "{{ music_dir }}"
 
 # Uncomment to refresh the database whenever files in the music_directory are changed
-#auto_update "yes"
+auto_update "yes"
 
 # Uncomment to enable the functionalities
 playlist_directory "{{ mpd_root_dir }}/playlists"

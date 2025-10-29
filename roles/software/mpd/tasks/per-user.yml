@@ -45,7 +45,7 @@
     owner: "{{ target_user }}"
     group: "{{ target_user }}"
   loop:
-    - path: "{{ mpd_root_dir }}/databate"
+    - path: "{{ mpd_root_dir }}/database"
       state: touch
       mode: '0644'
     - path: "{{ mpd_root_dir }}/playlists"
@@ -60,6 +60,15 @@
     - path: "{{ mpd_root_dir }}/sticker.sql"
       state: touch
       mode: '0644'
+
+- name: "Starting & enabling mpd user service unit"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.systemd:
+    name: mpd.service
+    scope: user
+    enabled: true
+    state: started
 
 
 
