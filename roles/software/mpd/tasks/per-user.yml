@@ -39,7 +39,7 @@
   become: true
   become_user: "{{ target_user }}"
   ansible.builtin.lineinfile:
-    path: "{{ mpd_root_dir }}/config"
+    path: "{{ mpd_root_dir }}/mpd.conf"
     regexp: '^#?music_directory.*'
     line: "music_directory    {{ music_dir }}"
 
