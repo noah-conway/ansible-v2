@@ -1,6 +1,7 @@
 ---
 mode: "user" # user or system mode
 mpd_root_dir: "{{ XDG_CONFIG_HOME }}/mpd"
+ncmpcpp_root_dir: "{{ XDG_CONFIG_HOME }}/ncmpcpp"
 music_dir: "{{ USER_MEDIA_ROOT }}/music"
 
 mpd_port: '6600'
