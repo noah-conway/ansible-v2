@@ -1,6 +1,6 @@
 ---
 mode: "user" # user or system mode
 mpd_root_dir: "{{ XDG_CONFIG_HOME }}/mpd"
-music_dir: "{{ USER_MEDIA_ROOT }}/music"
+music_dir: "{{ USER_MEDIA_ROOT }}"
 
 
