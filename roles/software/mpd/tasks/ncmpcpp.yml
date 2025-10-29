@@ -26,3 +26,13 @@
     path: "{{ ncmpcpp_root_dir }}/config"
     regexp: '^\s*#?\s*mpd_music_dir\s*=\s*.*$'
     line: "mpd_music_dir = {{ music_dir }}"
+
+- name: "Setting vim-like keybindings in ncmpcpp"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.copy:
+    src: files/ncmpcpp-vim-keybindings
+    dest: "{{ ncmpcpp_root_dir }}/bindings"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0644"

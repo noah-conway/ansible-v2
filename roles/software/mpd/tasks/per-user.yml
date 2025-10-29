@@ -35,6 +35,14 @@
     group: "{{ target_user }}"
     mode: '0644'
 
+- name: "Setting musid_dir in mpd config file"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.lineinfile:
+    path: "{{ mpd_root_dir }}/config"
+    regexp: '^#?music_directory.*'
+    line: "music_directory    {{ music_dir }}"
+
 - name: "Creating mpd files and directories"
   become: true
   become_user: "{{ target_user }}"
