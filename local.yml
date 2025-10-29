@@ -6,7 +6,6 @@
     target_user: noah
 
   roles:
-    - software/mpd
-    - base/testing
+    - apps/mpd
 
 
