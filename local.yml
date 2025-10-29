@@ -1,5 +1,12 @@
 ---
 - hosts: localhost
   become: true
+
+  vars:
+    target_user: noah
+
   roles:
     - software/cowsay
+    - software/mpd
+
+
