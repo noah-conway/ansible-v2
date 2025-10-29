@@ -1,0 +1,28 @@
+---
+- name: "Creating ncmpcpp root dir in XDG_CONFIG_HOME"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ ncmpcpp_root_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0755'
+
+- name: "Copying ncmpcpp config file"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.template:
+    src: templates/ncmpcpp.conf.j2
+    dest: "{{ ncmpcpp_root_dir }}/config"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: '0644'
+
+- name: "Setting mpd_musid_dir in ncmpcpp config file"
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.lineinfile:
+    path: "{{ ncmpcpp_root_dir }}/config"
+    regexp: '^\s*#?\s*mpd_music_dir\s*=\s*.*$'
+    line: "mpd_music_dir = {{ music_dir }}"

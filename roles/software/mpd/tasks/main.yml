@@ -14,3 +14,8 @@
   ansible.builtin.include_tasks:
     file: per-user.yml
   when: mode == "user"
+
+- name: "Configuring ncmpcpp"
+  ansible.builtin.include_tasks:
+    file: ncmpcpp.yml
+  when: target_user is defined
