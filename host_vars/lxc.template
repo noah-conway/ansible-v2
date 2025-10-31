@@ -1,0 +1,9 @@
+---
+# Container variables
+vmid:
+memory:
+cpus:
+ostemplate:
+provision:
+
+
