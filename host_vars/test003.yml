@@ -1,0 +1,9 @@
+---
+# Container variables
+vmid: 1229
+memory: 2048
+cpus: 2
+ostemplate: "{{ debian_12 }}"
+provision: true
+
+

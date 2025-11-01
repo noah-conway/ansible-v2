@@ -19,7 +19,7 @@
     group: "{{ target_user }}"
     mode: '0644'
 
-- name: "Setting mpd_musid_dir in ncmpcpp config file"
+- name: "Setting mpd_music_dir in ncmpcpp config file"
   become: true
   become_user: "{{ target_user }}"
   ansible.builtin.lineinfile:

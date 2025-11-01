@@ -6,6 +6,6 @@
     target_user: noah
 
   roles:
-    - apps/mpd
+    - apps/cowsay
 
 

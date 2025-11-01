@@ -1,5 +1,5 @@
 # Ansible variables
-ANSIBLE_SERVICE_USER: 'ansi'
+ANSIBLE_SERVICE_USERNAME: 'ansi'
 ANSIBLE_SERVICE_UID: '3333'
 # Network definitions
 gateway: '192.168.4.1'

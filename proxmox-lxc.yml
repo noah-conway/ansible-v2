@@ -72,6 +72,7 @@
         api_host: "{{ proxmox_host }}"
         state: started
         validate_certs: false
+      when: lxc_created is changed
 
 # Post-start configuration of LXCs
 
@@ -79,6 +80,7 @@
     - name: "Waiting for LXC container creation"
       ansible.builtin.wait_for_connection:
         timeout: 180
+      when: lxc_created is changed 
 
     - name: "Updating and upgrading new containers"
       ansible.builtin.apt:
