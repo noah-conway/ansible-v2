@@ -1,0 +1,44 @@
+---
+# ansible and git to latest version
+- name: "Ensuring ansible is at latest version"
+  become: true
+  ansible.builtin.package:
+    name: ansible
+    state: latest
+
+- name: "Ensuring git and sudo are installed"
+  become: true
+  ansible.builtin.package:
+    name:
+      - git
+      - sudo
+    state: present
+
+- name: "Creating ansible service user"
+  become: true
+  ansible.builtin.user:
+    name: "{{ ANSIBLE_SERVICE_USERNAME }}"
+    shell: /bin/bash
+    uid: "{{ ANSIBLE_SERVICE_UID }}"
+    create_home: true
+    password_lock: true
+
+- name: "Allow passwordless sudo for ansible service user"
+  become: true
+  ansible.builtin.lineinfile: 
+    path: "/etc/sudoers.d/{{ ANSIBLE_SERVICE_USERNAME }}"
+    line: "{{ ANSIBLE_SERVICE_USERNAME }} ALL=(ALL) NOPASSWD:ALL"
+    create: true
+    state: present
+    validate: '/usr/sbin/visudo -cf %s'
+
+# Copy provision script to remote server
+# Setup systemd timer
+
+    
+    
+
+
+
+
+ 

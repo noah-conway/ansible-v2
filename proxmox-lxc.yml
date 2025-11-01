@@ -80,7 +80,7 @@
       ansible.builtin.wait_for_connection:
         timeout: 180
 
-    - name: "Updating apt cache and upgrading packages"
+    - name: "Updating and upgrading new containers"
       ansible.builtin.apt:
         upgrade: dist
         update_cache: yes
@@ -95,6 +95,9 @@
       when: "bind_mounts is defined and bind_mounts | length > 0"
   # Install git and ansible
   # Copy provision script
+    - name: "Setting up ansible-pull provisioning script"
+      ansible.builtin.include_role:
+        name: sys/ansible-pull-setup
   # Run provision script if provision is true
   
-
+  

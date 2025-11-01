@@ -1,3 +1,6 @@
+# Ansible variables
+ANSIBLE_SERVICE_USER: 'ansi'
+ANSIBLE_SERVICE_UID: '3333'
 # Network definitions
 gateway: '192.168.4.1'
 subnet_mask: '255.255.252.0'
