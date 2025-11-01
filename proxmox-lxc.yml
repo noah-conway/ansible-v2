@@ -1,6 +1,7 @@
 ---
 - name: "Provisioning containers on Proxmox as defined in the Ansible inventory file" 
-  hosts: proxmoxlxc
+  hosts: lxc
+  remote_user: root
   gather_facts: false
 
   tasks:
@@ -11,16 +12,21 @@
         src: "~/.ssh/id_ed25519.pub"
       register: ssh_pub_key
 
+    - name: "debug"
+      ansible.builtin.debug:
+        msg: "ip={{ ansible_host}}{{ subnet_CIDR }}"
+
     - name: "Provisioning LXC containers on Proxmox node {{ proxmox_host }}"
       delegate_to: 127.0.0.1
       community.proxmox.proxmox:
-        api_user: "{{ proxmox_api_user }}@pam"
-        api_password: "{{ proxmox_api_passwd }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
         api_host: "{{ proxmox_host }}"
         vmid: "{{ vmid }}"
         memory: "{{ memory }}"
         cpus: "{{ cpus }}"
-        netif: '{"net0":"name={{ proxmox_netif }},ip={{ ansible_host }}/{{ subnet_mask }},gw={{ gateway }},bridge={{ proxmox_netbridge }}"}'
+        netif: '{"net0":"name={{ proxmox_netif }},ip={{ ansible_host }}{{ subnet_CIDR }},gw={{ gateway }},bridge={{ proxmox_netbridge }}"}'
         #password: "{{ proxmox_lxc_default_pass }}"
         hostname: "{{ inventory_hostname }}"
         storage: "{{ proxmox_vm_storage }}"
@@ -31,6 +37,8 @@
         pubkey: "{{ ssh_pub_key['content'] | b64decode }}"
         onboot: true
         state: present
+        validate_certs: false
+      register: lxc_created 
 
     - name: "Waiting for container creation"
       ansible.builtin.wait_for:
@@ -40,40 +48,53 @@
     - name: "Adding bind mounts to Proxmox containers"
       delegate_to: 127.0.0.1
       community.proxmox.proxmox:
-        api_user: "{{ proxmox_api_user }}@pam"
-        api_password: "{{ proxmox_api_passwd }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_password: "{{ proxmox_api_passwd }}" # Adding bind mounts requires root user with password auth
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
         api_host: "{{ proxmox_host }}"
+        node: "{{ proxmox_node }}"
         vmid: "{{ vmid }}"
         hostname: "{{ inventory_hostname }}"
         mount_volumes: "{{ bind_mounts }}"
+        state: present
+        validate_certs: false
       when: "bind_mounts is defined and bind_mounts | length > 0"
 
     - name: "Starting LXC containers on Proxmox node {{ proxmox_host }}"      
       delegate_to: 127.0.0.1
       community.proxmox.proxmox:
-        node: "{{ proxmox_host }}"
+        node: "{{ proxmox_node }}"
         vmid: "{{ vmid }}"
-        api_user: "{{ proxmox_api_user }}@pam"
-        api_password: "{{ proxmox_api_pass }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
         api_host: "{{ proxmox_host }}"
         state: started
+        validate_certs: false
 
-    - name: "Installing git and ansible"
-      become: true
-      ansible.builtin.package:
-        name:
-          - git
-          - ansible
-        state: latest
+# Post-start configuration of LXCs
 
-- name: "Running first plays to set up ansible-pull"
-  hosts: deblxctest
-  become: true
+  # Wait until container is reachable
+    - name: "Waiting for LXC container creation"
+      ansible.builtin.wait_for_connection:
+        timeout: 180
 
-  tasks:
-    - name: "Installing git and ansible"
-      ansible.builtin.package:
-        name:
-          - git
-          - ansible
-        state: latest
+    - name: "Updating apt cache and upgrading packages"
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      when: lxc_created is changed 
+
+  # Creating bind-mount group
+    - name: "Creating bind-mount group"
+      ansible.builtin.group:
+        name: bindmount
+        gid: "{{ proxmox_bind_mount_gid }}"
+        state: present
+      when: "bind_mounts is defined and bind_mounts | length > 0"
+  # Install git and ansible
+  # Copy provision script
+  # Run provision script if provision is true
+  
+

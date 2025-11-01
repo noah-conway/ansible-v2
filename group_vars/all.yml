@@ -1,3 +1,8 @@
+# Network definitions
+gateway: '192.168.4.1'
+subnet_mask: '255.255.252.0'
+subnet_CIDR: '/22'
+
 # XDG Directory Specifications
 XDG_CONFIG_HOME: "~/.config"
 XDG_STATE_HOME: "~/.local/state"

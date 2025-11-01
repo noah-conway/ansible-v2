@@ -1,0 +1,13 @@
+---
+# Container variables
+vmid: '1231'
+memory: '2048'
+cpus: '2'
+ostemplate: "{{ debian_12 }}"
+provision: true
+
+bind_mounts:
+  - id: mp0
+    mountpoint: "/mnt/bound_filesystem"
+    host_path: "{{ pmx_apps_root }}/testing"
+
