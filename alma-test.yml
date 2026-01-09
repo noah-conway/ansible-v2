@@ -1,0 +1,7 @@
+---
+- name: "alma test"
+  hosts: pvevm
+  remote_user: alma
+  
+  roles:
+    - podman/podman

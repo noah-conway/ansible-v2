@@ -1,0 +1,21 @@
+---
+- name: "Installing podman on RHEL-based systems"
+  become: true
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: "Installing podman cockpit module | getting installed package facts"
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: "Installing podman cockpit module | installing on RHEL-based systems"
+  become: true
+  ansible.builtin.dnf:
+    name: cockpit-podman
+    state: present
+  when: 
+    - ansible_facts['os_family'] == "RedHat"
+    - "'cockpit' is in ansible_facts.packages"
+
