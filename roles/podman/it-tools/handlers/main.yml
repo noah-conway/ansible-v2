@@ -1,0 +1,8 @@
+---
+- name: restart-service
+  ansible.builtin.systemd:
+    name: "{{ container_name }}"
+    state: restarted
+    scope: "user"
+  
+

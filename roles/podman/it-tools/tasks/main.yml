@@ -20,7 +20,9 @@
     owner: "{{ pm_host_username }}" 
     group: "{{ pm_host_username }}"
     mode: '0644'
-  notify: reload-systemd-user
+  notify: 
+    - reload-systemd-user
+    - restart-service
 
 - name: "Setting ports on {{ container_name }} podman container"
   become: true
@@ -30,7 +32,9 @@
     insertafter: '^Image={{ container_image }}$'
     regexp: '^PublishPort=.*$'
   loop: "{{ publish_ports }}"
-  notify: reload-systemd-user
+  notify: 
+    - reload-systemd-user
+    - restart-service
 
 - name: "Allow port on firewalld"
   become: true
@@ -40,4 +44,5 @@
     permanent: true
     state: enabled
   loop: "{{ publish_ports }}"
-  notify: reload-firewalld
+  notify: 
+    - reload-firewalld
