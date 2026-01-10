@@ -1,6 +1,10 @@
 # Ansible variables
 ANSIBLE_SERVICE_USERNAME: 'ansi'
 ANSIBLE_SERVICE_UID: '3333'
+
+# Timezone
+DEFAULT_TIMEZONE: "America/Los_Angeles"
+
 # Network definitions
 gateway: '192.168.4.1'
 subnet_mask: '255.255.252.0'

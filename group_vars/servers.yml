@@ -2,3 +2,6 @@
 # Podman variables - for podman container hosts
 pm_host_username: "pm"
 pm_host_usertext: "User to run podman containers"
+pm_host_datadir: "/mnt/data"
+pm_rootless_ctdir: "/home/{{ pm_host_username }}/.config/containers"
+
