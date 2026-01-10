@@ -11,3 +11,11 @@
     src: ittools.container
     dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
   notify: reload-systemd
+
+- name: "Allow port on firewalld"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    port: 8282/tcp
+    permanent: true
+    state: enabled

@@ -1,0 +1,8 @@
+tz: NULL
+def_hostname: "{{ hostname | default(inventory_hostname) }}"
+RHEL_base_pkg:
+  - git
+  - vim
+  - nano
+  - rsync
+  - tree

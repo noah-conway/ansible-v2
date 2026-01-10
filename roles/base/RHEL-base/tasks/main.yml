@@ -1,0 +1,32 @@
+---
+- name: "Asserting system is RHEL-base"
+  ansible.builtin.assert:
+    that: ansible_facts['os_family'] == "RedHat"
+
+- name: "debug"
+  ansible.builtin.debug:
+    var: DEFAULT_TIMEZONE
+
+- name: "Setting timezone"
+  become: true
+  community.general.timezone:
+    name: "{{ tz | default(DEFAULT_TIMEZONE) }}"
+
+- name: "Setting hostname"
+  ansible.builtin.hostname:
+    name: "{{ def_hostname }}"
+    use: systemd
+    
+- name: "Ensuring system is up-to-date"
+  become: true
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: "Installing base packages"
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ RHEL_base_pkg }}"
+    state: latest
+

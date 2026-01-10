@@ -1,0 +1,47 @@
+---
+- name: "Installing firewalld on RHEL-based systems"
+  become: true
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+  when: ansible_facts['os_family'] == "RedHat" 
+
+- name: "Start and enable firewalld service"
+  become: true
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: "Set default zone to 'public'"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    permanent: true
+    state: enabled
+  notify: reload-firewalld
+
+- name: "Allowing SSH,http,https on public zone"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - ssh
+    - http
+    - https
+  notify: reload-firewalld
+
+- name: "Setting default deny policy on public zone"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    target: DROP
+    permanent: true
+    state: enabled
+  notify: reload-firewalld
+
+- meta: flush_handlers
+

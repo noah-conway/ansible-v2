@@ -1,0 +1,9 @@
+---
+- name: reload-firewalld
+  become: true
+  ansible.builtin.command: firewall-cmd --reload
+
+- name: reload-systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: "user"
