@@ -6,6 +6,7 @@
 # Configures podman cockpit module (if cockpit is present
 
 - name: "Creating podman container user for rootless containers"
+  become: true
   ansible.builtin.user:
     name: "{{ pm_host_username }}"
     shell: "{{ pm_host_shell | default(omit) }}"
@@ -13,6 +14,7 @@
     comment: "{{ pm_host_usertext | default(omit) }}"
 
 - name: "Add container user {{ pm_host_username }} to systemd-journal group"
+  become: true
   ansible.builtin.user:
     name: "{{ pm_host_username }}"
     groups: "systemd-journal"
@@ -24,6 +26,7 @@
   register: linger
 
 - name: "Enable linger for container user {{ pm_host_username }}"
+  become: true
   ansible.builtin.command:
     argv:
       - /usr/bin/loginctl
