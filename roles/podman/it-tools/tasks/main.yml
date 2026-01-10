@@ -1,21 +1,43 @@
 ---
-- name: "Remove existing quadlet files"
-  become: true
-  ansible.builtin.file:
-    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
-    state: absent
+#- name: "Remove existing quadlet files"
+#  become: true
+#  ansible.builtin.file:
+#    dest: "{{ pm_rootless_ctdir }}/it-tools.container"
+#    state: absent
 
-- name: "Copy quadlet files into quadlet directory"
+#- name: "Copy quadlet files into quadlet directory"
+#  become: true
+#  ansible.builtin.copy:
+#    src: ittools.container
+#    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
+#  notify: reload-systemd
+
+- name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
   become: true
-  ansible.builtin.copy:
-    src: ittools.container
-    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
-  notify: reload-systemd
+  ansible.builtin.template:
+    src: "{{ quadlet_filename }}.j2"
+    dest: "{{ pm_rootless_ctdir }}/{{ quadlet_filename }}"
+    owner: "{{ pm_host_username }}" 
+    group: "{{ pm_host_username }}"
+    mode: '0644'
+  notify: reload-systemd-user
+
+- name: "Setting ports on {{ container_name }} podman container"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "{{ pm_rootless_ctdir }}/{{ quadlet_filename }}"
+    line: "PublishPort={{ item.ext }}:{{ item.int }}" 
+    insertafter: '^Image={{ container_image }}$'
+    regexp: '^PublishPort=.*$'
+  loop: "{{ publish_ports }}"
+  notify: reload-systemd-user
 
 - name: "Allow port on firewalld"
   become: true
   ansible.posix.firewalld:
     zone: public
-    port: 8282/tcp
+    port: "{{ item.ext }}/{{ item.proto }}"
     permanent: true
     state: enabled
+  loop: "{{ publish_ports }}"
+  notify: reload-firewalld

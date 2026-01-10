@@ -1,2 +1,11 @@
 ---
-pm_rootless_ctr_dir: "/home/{{ pm_host_username }}/.config/containers/systemd"
+container_name: "it-tools"
+container_image_loc: "docker.io/corentinth/it-tools"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 8282
+    int: 80
+    proto: 'tcp'
+
+container_image: "{{ container_image_loc }}:{{ container_version_tag }}"
+quadlet_filename: "{{ container_name }}.container"
