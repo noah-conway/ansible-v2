@@ -1,8 +1,43 @@
 ---
+# Ansible role to set up and install podman on RHEL and debian base systems
+# Creates a user to run podman containers as
+# Enables linger for this user
+# Installs podman and systemd-container
+# Configures podman cockpit module (if cockpit is present
+
+- name: "Creating podman container user for rootless containers"
+  ansible.builtin.user:
+    name: "{{ pm_host_username }}"
+    shell: "{{ pm_host_shell | default(omit) }}"
+    create_home: true
+    comment: "{{ pm_host_usertext | default(omit) }}"
+
+- name: "Add container user {{ pm_host_username }} to systemd-journal group"
+  ansible.builtin.user:
+    name: "{{ pm_host_username }}"
+    groups: "systemd-journal"
+    append: true
+
+- name: "Enable linger for container user {{ pm_host_username }} | confirm systemd-linger is set for containers user"
+  ansible.builtin.stat:
+    path: "/var/lib/systemd/linger/{{ pm_host_username }}"
+  register: linger
+
+- name: "Enable linger for container user {{ pm_host_username }}"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/loginctl
+      - enable-linger
+      - "{{ pm_host_username }}"
+    creates: "/var/lib/systemd/linger/{{ pm_host_username }}"
+  when: not linger.stat.exists
+
 - name: "Installing podman on RHEL-based systems"
   become: true
   ansible.builtin.dnf:
-    name: podman
+    name: 
+      - podman
+      - systemd-container
     state: present
   when: ansible_facts['os_family'] == "RedHat"
 
