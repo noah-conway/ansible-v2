@@ -1,0 +1,10 @@
+---
+- name: "Copy quadlet files into quadlet directory"
+  ansible.builtin.copy:
+    src: "files/ittools.container"
+    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
+    remote_src: true
+  notify: reload-systemd
+
+- name: Check quadlet status
+  ansible.builtin.shell: "/usr/lib/systemd/system-generators/podman-system-generator --user --dryrun"
