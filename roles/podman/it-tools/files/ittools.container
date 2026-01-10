@@ -1,12 +1,7 @@
-[unit]
-Description=it-tools collection
-After=network-online.target
-
 [Container]
 ContainerName=it-tools
-Image=corentinth/it-tools:latest
+Image=docker.io/corentinth/it-tools:latest
 PublishPort=8282:80
-AutoUpdate=registry
 
 [Install]
 WantedBy=default.target
