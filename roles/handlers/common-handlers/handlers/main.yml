@@ -4,6 +4,8 @@
   ansible.builtin.command: firewall-cmd --reload
 
 - name: reload-systemd-user
+  become: true
+  become_user: "{{ pm_host_username }}"
   ansible.builtin.systemd:
     daemon_reload: true
     scope: "user"

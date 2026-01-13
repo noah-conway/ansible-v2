@@ -5,5 +5,6 @@
   
   roles:
 #    - base/RHEL-base
+#    - sec/firewalld
+    - podman/podman
     - podman/it-tools
-    - sec/firewalld

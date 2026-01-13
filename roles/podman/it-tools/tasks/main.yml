@@ -20,9 +20,6 @@
     owner: "{{ pm_host_username }}" 
     group: "{{ pm_host_username }}"
     mode: '0644'
-  notify: 
-    - reload-systemd-user
-    - restart-service
 
 - name: "Setting ports on {{ container_name }} podman container"
   become: true
@@ -32,9 +29,21 @@
     insertafter: '^Image={{ container_image }}$'
     regexp: '^PublishPort=.*$'
   loop: "{{ publish_ports }}"
-  notify: 
-    - reload-systemd-user
-    - restart-service
+
+- name: "Daemon-reload"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.systemd_service:
+    scope: user
+    daemon_reload: true
+
+- name: "Starting systemd user"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.systemd_service:
+    name: "{{ container_name }}.service"
+    state: restarted
+    scope: user
 
 - name: "Allow port on firewalld"
   become: true

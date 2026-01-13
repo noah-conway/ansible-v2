@@ -13,6 +13,15 @@
     create_home: true
     comment: "{{ pm_host_usertext | default(omit) }}"
 
+- name: 'Create podman containers directory in "{{ pm_rootless_ctdir }}"'
+  become: true
+  ansible.builtin.file:
+    path: "{{ pm_rootless_ctdir }}"
+    state: directory
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0755'
+
 - name: "Add container user {{ pm_host_username }} to systemd-journal group"
   become: true
   ansible.builtin.user:
