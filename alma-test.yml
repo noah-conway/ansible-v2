@@ -4,7 +4,8 @@
   remote_user: alma
   
   roles:
-#    - base/RHEL-base
-#    - sec/firewalld
+    - base/RHEL-base
+    - sec/firewalld
     - podman/podman
+    - podman/copyparty
     - podman/it-tools

@@ -1,0 +1,15 @@
+---
+container_name: "copyparty"
+container_image_loc: "ghcr.io/9001/copyparty-ac"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 3923
+    int: 3923
+    proto: 'tcp'
+
+container_image: "{{ container_image_loc }}:{{ container_version_tag }}"
+quadlet_filename: "{{ container_name }}.container"
+
+copyparty_default_mount: "/mnt/data"
+copyparty_config_dir: "/home/{{ pm_host_username }}/copyparty"
+

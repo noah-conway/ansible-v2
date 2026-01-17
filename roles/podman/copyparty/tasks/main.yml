@@ -1,0 +1,82 @@
+---
+#- name: "Remove existing quadlet files"
+#  become: true
+#  ansible.builtin.file:
+#    dest: "{{ pm_rootless_ctdir }}/it-tools.container"
+#    state: absent
+
+#- name: "Copy quadlet files into quadlet directory"
+#  become: true
+#  ansible.builtin.copy:
+#    src: ittools.container
+#    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
+#  notify: reload-systemd
+#
+- name: "Ensuring directories exist"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: '0755'
+  loop:
+    - path: "{{ copyparty_default_mount }}"
+      owner: "{{ pm_host_username }}"
+      group: "{{ storage_groupname }}"
+    - path: "{{ copyparty_config_dir }}"
+      owner: "{{ pm_host_username }}"
+      group: "{{ pm_host_username }}"
+
+- name: "Copying config file template"
+  become: true
+  ansible.builtin.template:
+    src: "copyparty.config.j2"
+    dest: "{{ copyparty_config_dir }}/main.conf"
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0644'
+
+- name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
+  become: true
+  ansible.builtin.template:
+    src: "{{ quadlet_filename }}.j2"
+    dest: "{{ pm_rootless_ctdir }}/{{ quadlet_filename }}"
+    owner: "{{ pm_host_username }}" 
+    group: "{{ pm_host_username }}"
+    mode: '0644'
+
+- name: "Setting ports on {{ container_name }} podman container"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "{{ pm_rootless_ctdir }}/{{ quadlet_filename }}"
+    line: "PublishPort={{ item.ext }}:{{ item.int }}" 
+    insertafter: '^Image={{ container_image }}$'
+    regexp: '^PublishPort=.*$'
+  loop: "{{ publish_ports }}"
+
+- name: "Daemon-reload"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.systemd_service:
+    scope: user
+    daemon_reload: true
+
+- name: "Starting systemd user"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.systemd_service:
+    name: "{{ container_name }}.service"
+    state: restarted
+    scope: user
+
+- name: "Allow port on firewalld"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    port: "{{ item.ext }}/{{ item.proto }}"
+    permanent: true
+    state: enabled
+  loop: "{{ publish_ports }}"
+  notify: 
+    - reload-firewalld

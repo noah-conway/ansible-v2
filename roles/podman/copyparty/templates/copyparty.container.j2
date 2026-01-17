@@ -1,6 +1,10 @@
 [Container]
 ContainerName={{ container_name }}
 Image={{ container_image }}
+AutoUpdate=registry
+NoNewPrivileges=true
+Volume={{ copyparty_default_mount }}:/w
+Volume={{ copyparty_config_dir }}:/cfg
 
 [Service]
 Restart=always
