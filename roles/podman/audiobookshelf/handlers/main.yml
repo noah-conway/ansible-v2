@@ -1,0 +1,13 @@
+---
+- name: restart-service
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.systemd_service:
+    name: "{{ container_name }}.service"
+    state: restarted
+    scope: "user"
+  environment: 
+    XDG_RUNTIME_DIR: "/run/user/1001"
+    
+  
+

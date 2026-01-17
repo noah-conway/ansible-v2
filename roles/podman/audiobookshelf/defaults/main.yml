@@ -1,0 +1,16 @@
+---
+container_name: "audiobookshelf"
+container_image_loc: "ghcr.io/advplyr/audiobookshelf"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 13378
+    int: 80
+    proto: 'tcp'
+
+container_image: "{{ container_image_loc }}:{{ container_version_tag }}"
+quadlet_filename: "{{ container_name }}.container"
+
+audiobookshelf_data_dir: '/mnt/data/audiobooks'
+audiobookshelf_metadata_dir: '/home/{{ pm_host_username }}/audiobookshelf/metadata'
+audiobookshelf_config_dir: '/home/{{ pm_host_username }}/audiobookshelf/config'
+

@@ -1,0 +1,10 @@
+[Container]
+ContainerName={{ container_name }}
+Image={{ container_image }}
+NoNewPrivileges=true
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

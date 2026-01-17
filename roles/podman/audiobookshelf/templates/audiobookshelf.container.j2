@@ -1,0 +1,16 @@
+[Container]
+ContainerName={{ container_name }}
+Image={{ container_image }}
+AutoUpdate=registry
+NoNewPrivileges=true
+Volume={{ audiobookshelf_data_dir }}/audiobooks:/audiobooks
+Volume={{ audiobookshelf_data_dir }}/books:/books
+Volume={{ audiobookshelf_data_dir }}/podcasts:/podcasts
+Volume={{ audiobookshelf_metadata_dir }}:/metadata
+Volume={{ audiobookshelf_config_dir }}:/config
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
