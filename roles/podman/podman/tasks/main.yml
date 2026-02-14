@@ -44,6 +44,15 @@
     creates: "/var/lib/systemd/linger/{{ pm_host_username }}"
   when: not linger.stat.exists
 
+- name: "Installing podman on Debian-based systems"
+  become: true
+  ansible.builtin.apt:
+    name: 
+      - podman
+      - systemd-container
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
 - name: "Installing podman on RHEL-based systems"
   become: true
   ansible.builtin.dnf:

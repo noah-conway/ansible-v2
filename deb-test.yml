@@ -1,0 +1,11 @@
+---
+- name: "deb test"
+  hosts: pvevmdeb
+  remote_user: ansi
+  
+  roles:
+    #- base/RHEL-base
+    - sec/firewalld
+    - podman/podman
+    #- podman/copyparty
+    - podman/it-tools
