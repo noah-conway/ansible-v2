@@ -1,0 +1,10 @@
+---
+virtiofs_dir: ""
+mount_point: ""
+virtio_access_group: "virtio-share"
+virtio_access_gid: "2147"
+method: "systemd"
+systemd_system_path: "/etc/systemd/system"
+automount: "true"
+timeout_sec: "10"
+timeout_idle_sec: "300"

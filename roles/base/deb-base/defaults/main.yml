@@ -1,0 +1,17 @@
+auto_reboot_time: '11:30' #utc
+timezone: "America/Los_Angeles"
+packages_essential:
+  - build-essential
+  - net-tools
+  - vim
+  - git
+  - curl
+  - rsync
+  - sudo
+  - tmux
+  - fzf
+  - tree
+  - wget
+  - htop
+  - iperf3
+ 

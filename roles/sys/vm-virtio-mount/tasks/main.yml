@@ -1,0 +1,32 @@
+---
+- name: "Greating virtio group for mount access"
+  become: true
+  ansible.builtin.group:
+    name: "{{ virtio_access_group }}"
+    gid: "{{ virtio_access_gid }}"
+    state: present
+
+- name: "Ensuring mount point exists"
+  become: true
+  ansible.builtin.file:
+    path: "{{ mount_point }}"
+    state: directory
+    owner: "root"
+    group: "{{ virtio_access_group }}"
+    mode: "0775"
+
+- name: "Adding mount to fstab file"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/etc/fstab"
+    state: present
+    line: "{{ virtiofs_dir }} {{ mount_point }} virtiofs rw,relatime 0 0"
+    validate: "mount -a -f -T %s"
+  when: method == "fstab"
+
+- name: "Adding systemd-mount"
+  ansible.builtin.include_tasks:
+    file: systemd-mount.yml
+  when: method == "systemd"
+
+

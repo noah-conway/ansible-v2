@@ -1,0 +1,48 @@
+---
+- name: "Installing unattended-upgrades management packages"
+  become: yes
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+    state: present
+
+- name: "Setting unattended-upgrade origins"
+  become: yes
+  ansible.builtin.lineinfile:
+    dest: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    state: "present"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  loop:
+    - line: '        "${distro_id}:${distro_codename}-security";'
+      regexp: '\/\/\s*"\$\{distro_id}:\$\{distro_codename\}-security";'
+    - line: '        "${distro_id}ESMApps:${distro_codename}-apps-security";'
+      regexp: '\/\/\s*"\$\{distro_id}ESMApps:\$\{distro_codename\}-apps-security";'
+    - line: '        "${distro_id}ESM:${distro_codename}-infra-security";'
+      regexp: '\/\/\s*"\$\{distro_id}ESM:\$\{distro_codename\}-infra-security";'
+
+
+- name: "Setting automatic reboot for {{ auto_reboot_time }}"
+  become: yes
+  ansible.builtin.lineinfile:
+    dest: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    state: "present"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  loop:
+    - line: 'Unattended-Upgrade::Automatic-Reboot "true";'
+      regexp: '\/\/Unattended-Upgrade::Automatic-Reboot "false";' #if commented and false
+    - line: 'Unattended-Upgrade::Automatic-Reboot "true";'
+      regexp: '\/\/Unattended-Upgrade::Automatic-Reboot "true";' #if commented and true
+    - line: 'Unattended-Upgrade::Automatic-Reboot "true";'
+      regexp: '^\s*Unattended-Upgrade::Automatic-Reboot "false";$' #if false
+    - line: 'Unattended-Upgrade::Automatic-Reboot-Time "{{ auto_reboot_time }}";'
+      regexp: '^.*Unattended-Upgrade::Automatic-Reboot-Time ".*";$'
+
+
+
+      
+      
+      
+

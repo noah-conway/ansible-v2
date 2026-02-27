@@ -1,0 +1,27 @@
+---
+- ansible.builtin.assert: { that: "ansible_facts['os_family'] == 'Debian'" }
+
+
+- name: '----------> Upgrading packages'
+  become: yes
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+
+- name: '----------> Configuring timezone & locale'
+  ansible.builtin.include_tasks:
+    file: timezone-locale.yml
+
+- name: '----------> Configuring unattended security upgrades'
+  ansible.builtin.include_tasks:
+    file: unattended-upgrades.yml
+
+- name: '----------> Installing essential packages'
+  ansible.builtin.include_tasks:
+    file: install-essential-pkgs.yml
+
+- name: 'Locking ansible automation user'
+  become: yes
+  ansible.builtin.user:
+    name: otto
+    password_lock: true

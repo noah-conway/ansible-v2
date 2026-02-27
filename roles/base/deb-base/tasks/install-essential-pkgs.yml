@@ -1,0 +1,17 @@
+---
+- name: Installing essential packages
+  become: yes
+  ansible.builtin.apt:
+    name: "{{ packages_essential }}"
+    state: present
+
+- name: "Installing qemu-guest-agent on Debian virtual machines"
+  become: yes
+  ansible.builtin.apt:
+    name: qemu-guest-agent
+    state: present
+  when:
+    - ansible_facts['virtualization_role'] == "kvm"
+    - "'QEMU' in ansible_facts['system_vendor']"
+
+

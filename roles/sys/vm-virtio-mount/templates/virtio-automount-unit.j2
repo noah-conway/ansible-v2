@@ -1,0 +1,9 @@
+[Unit]
+Description=Automount for {{ virtiofs_dir }} from proxmox host
+
+[Automount]
+Where={{ mount_point }}
+TimeoutIdleSec={{ timeout_idle_sec }}
+
+[Install]
+WantedBy=multi-user.target

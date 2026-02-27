@@ -1,0 +1,12 @@
+[Unit]
+Description = Mount for {{ virtiofs_dir }} virtiofs share from proxmox host
+
+[Mount]
+What={{ virtiofs_dir }}
+Where={{ mount_point }}
+Type=virtiofs
+Options=defaults
+TimeoutSec={{ timeout_sec }}
+
+[Install]
+WantedBy=multi-user.target
