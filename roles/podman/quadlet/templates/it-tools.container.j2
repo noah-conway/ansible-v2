@@ -1,0 +1,23 @@
+[Unit]
+Description={{ container_name }} podman container
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+ContainerName={{ container_name }}
+Image={{ container_image }}
+{% for port in publish_ports %}
+PublishPort={{ port.int }}:{{ port.ext }}
+{% endfor %}
+NoNewPrivileges=true
+PidsLimit={{ pids_limit | default('256') }}
+
+
+[Service]
+Restart=always
+MemoryMax={{ memory_limit | default('1G') }}
+CPUQuota={{ cpu_limit | default('50') }}%
+CPUWeight={{ cpu_weight | default('100') }}
+
+[Install]
+WantedBy=default.target

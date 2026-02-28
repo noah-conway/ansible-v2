@@ -5,7 +5,7 @@
     name: "{{ unitName.stdout }}"
     state: started
     enabled: true
-  when: automount != true
+  when: automount != "true"
 
 - name: restart-automount
   become: true
