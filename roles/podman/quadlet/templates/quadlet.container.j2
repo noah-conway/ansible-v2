@@ -5,9 +5,9 @@ Wants=network-online.target
 
 [Container]
 ContainerName={{ container_name }}
-Image={{ container_image }}
+Image={{ container_image_full }}
 {% for port in publish_ports %}
-PublishPort={{ port.int }}:{{ port.ext }}
+PublishPort={{ port.ext }}:{{ port.int }}
 {% endfor %}
 NoNewPrivileges=true
 PidsLimit={{ pids_limit | default('256') }}

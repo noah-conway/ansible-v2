@@ -12,6 +12,25 @@
 #    dest: "{{ pm_rootless_ctr_dir }}/it-tools.container"
 #  notify: reload-systemd
 # Get the UID of xadmin for systemd user scope
+#
+- name: "Load container vars file"
+  ansible.builtin.include_vars:
+    dir: "{{ playbook_dir }}/podman_vars/{{ current_container }}"
+  when: current_container is defined
+
+- name: debug
+  ansible.builtin.debug:
+    var: current_container
+
+- name: "Assembling facts"
+  ansible.builtin.set_fact:
+    container_image_full: "{{ container_image }}:{{ container_version_tag }}"
+    quadlet_filename: "{{ container_name }}.container"
+
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ container_image_full }} to {{ quadlet_filename }}"
+
 - name: "Get UID of {{ pm_host_username }} for systemd user scope"
   become: false
   ansible.builtin.getent:
@@ -45,7 +64,7 @@
   become: true
   #become_user: "{{ pm_host_username }}"
   ansible.builtin.template:
-    src: "{{ quadlet_filename }}.j2"
+    src: "quadlet.container.j2"
     dest: "{{ pm_rootless_ctdir }}/{{ quadlet_filename }}"
     owner: "{{ pm_host_username }}" 
     group: "{{ pm_host_username }}"
@@ -54,24 +73,23 @@
 # /usr/lib/systemd/system-generators/podman-system-generator --user --dryrun
 
 
-- name: "Daemon-reload"
-  become: true
-  become_user: "{{ pm_host_username }}"
-  ansible.builtin.systemd_service:
-    scope: user
-    daemon_reload: true
-  environment:
-    XDG_RUNTIME_DIR: "{{ user_runtime_dir }}"
+#- name: "Daemon-reload"
+#  become: true
+#  become_user: "{{ pm_host_username }}"
+#  ansible.builtin.systemd_service:
+#    scope: user
+#    daemon_reload: true
+#  environment:
+#    XDG_RUNTIME_DIR: "{{ user_runtime_dir }}"
 
 - name: "Starting systemd user"
   become: true
   become_user: "{{ pm_host_username }}"
   ansible.builtin.systemd_service:
     name: "{{ container_name }}.service"
-    state: restarted
+    state: started
     scope: user
-  environment:
-    XDG_RUNTIME_DIR: "{{ user_runtime_dir }}"
+    daemon_reload: true
 
 #- name: "Allow port on firewalld"
 #  become: true

@@ -62,6 +62,15 @@
     state: present
   when: ansible_facts['os_family'] == "RedHat"
 
+- name: "Copying podman quadlets from defined podman_containers list"
+  ansible.builtin.include_role:
+    role: podman/quadlet
+  loop: "{{ podman_containers }}"
+  loop_control:
+    loop_var: container_nm
+  vars:
+    current_container: "{{ container_nm }}"
+
 - name: "Installing podman cockpit module | getting installed package facts"
   ansible.builtin.package_facts:
     manager: auto

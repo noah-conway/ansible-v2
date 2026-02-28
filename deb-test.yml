@@ -3,13 +3,8 @@
   hosts: pvevmdeb
   remote_user: ansi
 
-  tasks:
-    - name: debug
-      ansible.builtin.debug:
-        var: ansible_facts['pci']
-
   roles:
-    - role: base/deb-base
+#    - role: base/deb-base
     #- role: sys/vm-virtio-mount
       #vars:
         #virtiofs_dir: "virtio-share"
@@ -17,6 +12,5 @@
     #- base/RHEL-base
    # - role: sec/firewalld
     - role: podman/podman
-    - role: podman/quadlet
     #- podman/copyparty
 #    - podman/it-tools
