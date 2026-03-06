@@ -1,0 +1,12 @@
+---
+#mount_fs: ""
+#mount_point: ""
+#mount_owner: ""
+#mount_group: ""
+mount_mode: "0755"
+
+#mount_type: ""
+mount_options: 'defaults'
+systemd_system_path: "/etc/systemd/system"
+timeout_sec: "10"
+timeout_idle_sec: "300"

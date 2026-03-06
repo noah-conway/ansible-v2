@@ -1,0 +1,86 @@
+---
+- name: "Creating user for mount access"
+  become: true
+  ansible.builtin.user:
+    name: "{{ mount_owner }}"
+    uid_min: '2000'
+    state: present
+  when:
+    - mount_owner is defined
+    - mount_owner is not none
+
+- name: "Creating group for mount access"
+  become: true
+  ansible.builtin.group:
+    name: "{{ mount_group }}"
+    gid_min: '2000'
+    state: present
+  when: 
+    - mount_group is defined
+    - mount_group is not none
+
+- name: "Ensuring mount point exists"
+  become: true
+  ansible.builtin.file:
+    path: "{{ mount_point }}"
+    state: directory
+    owner: "{{ mount_owner | default(omit) }}"
+    group: >-
+      {{
+        group if group is defined
+        else owner if owner is defined
+        else omit
+      }}
+    mode: "{{ mount_mode }}"
+
+- name: "Retrieving systemd unit filename"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/systemd-escape
+      - -p
+      - --suffix=mount
+      - "{{ mount_point }}"
+  register: unitName
+
+- name: "Retrieving systemd automount unit filename"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/systemd-escape
+      - -p
+      - --suffix=automount
+      - "{{ mount_point }}"
+  register: AMunitName
+
+- name: "Copying systemd mount unit template"
+  become: true
+  ansible.builtin.template:
+    src: systemd-mount-unit.j2
+    dest: "{{ systemd_system_path }}/{{ unitName.stdout }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  register: mount_unit_result
+
+- name: "Copying systemd mount unit template"
+  become: true
+  ansible.builtin.template:
+    src: systemd-automount-unit.j2
+    dest: "{{ systemd_system_path }}/{{ AMunitName.stdout }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  register: am_unit_result
+
+- name: "Systemd Daemon-reload"
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  when: am_unit_result.changed or mount_unit_result.changed
+
+- name: restart-automount
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ AMunitName.stdout }}"
+    state: restarted
+    enabled: true
+  when: am_unit_result.changed or mount_unit_result.changed

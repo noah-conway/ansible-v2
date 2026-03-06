@@ -11,7 +11,9 @@ PublishPort={{ port.ext }}:{{ port.int }}
 {% endfor %}
 NoNewPrivileges=true
 PidsLimit={{ pids_limit | default('256') }}
-
+{% for v in volumes | default([]) %}
+Volume={{ v.host }}:{{ v.ctr }}
+{% endfor %}
 
 [Service]
 Restart=always

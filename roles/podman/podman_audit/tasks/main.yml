@@ -1,0 +1,22 @@
+---
+- name: "Gathering podman containers info"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  containers.podman.podman_container_info:
+  register: pm_ctr_info
+
+- name: Extract all host ports
+  debug:
+    msg: >-
+      {{
+        item.NetworkSettings.Ports
+        | dict2items
+        | map(attribute='value')
+        | map('first')
+        | map(attribute='HostPort')
+        | list
+      }}
+  loop: "{{ pm_ctr_info.containers }}"
+  loop_control:
+    label: "{{ item.Name }}"
+

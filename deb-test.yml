@@ -5,12 +5,12 @@
 
   roles:
 #    - role: base/deb-base
-    #- role: sys/vm-virtio-mount
-      #vars:
-        #virtiofs_dir: "virtio-share"
-        #mount_point: "/mnt/virtio_data"
-    #- base/RHEL-base
+    - role: sys/vm-virtio-mount
+      vars:
+        virtiofs_dir: "virtio-share"
+        mount_point: "/mnt/virtio_data"
    # - role: sec/firewalld
     - role: podman/podman
+    #- role: podman/podman_audit
     #- podman/copyparty
 #    - podman/it-tools

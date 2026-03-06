@@ -1,0 +1,9 @@
+[Unit]
+Description=Ansible-managed automount for {{ mount_fs }}
+
+[Automount]
+Where={{ mount_point }}
+TimeoutIdleSec={{ timeout_idle_sec }}
+
+[Install]
+WantedBy=multi-user.target

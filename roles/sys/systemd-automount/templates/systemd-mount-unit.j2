@@ -1,0 +1,12 @@
+[Unit]
+Description = Ansible-managed mount for {{ mount_fs }}
+
+[Mount]
+What={{ mount_fs }}
+Where={{ mount_point }}
+Type={{ mount_type }}
+Options={{ mount_options }}
+TimeoutSec={{ timeout_sec }}
+
+[Install]
+WantedBy=multi-user.target

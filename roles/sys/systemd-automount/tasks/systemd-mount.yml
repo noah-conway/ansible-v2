@@ -1,0 +1,59 @@
+---
+- name: "Retrieving systemd unit filename"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/systemd-escape
+      - -p
+      - --suffix=mount
+      - "{{ mount_point }}"
+  register: unitName
+
+- name: debug
+  ansible.builtin.debug:
+    var: unitName.stdout
+
+- name: "Copying systemd mount unit template"
+  become: true
+  ansible.builtin.template:
+    src: virtio-mount-unit.j2
+    dest: "{{ systemd_system_path }}/{{ unitName.stdout }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: restart-mount
+
+- name: "Retrieving systemd automount unit filename"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/systemd-escape
+      - -p
+      - --suffix=automount
+      - "{{ mount_point }}"
+  register: AMunitName
+
+- name: "Copying systemd mount unit template"
+  become: true
+  ansible.builtin.template:
+    src: virtio-automount-unit.j2
+    dest: "{{ systemd_system_path }}/{{ AMunitName.stdout }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: restart-automount
+  when: automount == "true"
+
+- name: "Systemd Daemon-reload"
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: "Stopping mount unit to be managed by automount"
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ unitName.stdout }}"
+    state: stopped
+    enabled: false
+  when: automount == "true"
+
+- meta: flush_handlers
+

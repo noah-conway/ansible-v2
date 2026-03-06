@@ -31,6 +31,17 @@
   ansible.builtin.debug:
     msg: "{{ container_image_full }} to {{ quadlet_filename }}"
 
+- name: "Ensuring volume mounts are present on host"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.host }}"
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0755'
+    state: directory
+  loop: "{{ volumes }}"
+  when: volumes is defined
+
 - name: "Get UID of {{ pm_host_username }} for systemd user scope"
   become: false
   ansible.builtin.getent:
