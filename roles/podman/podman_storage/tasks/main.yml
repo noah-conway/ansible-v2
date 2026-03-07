@@ -1,0 +1,11 @@
+---
+- name: "Mounting virtio share to store podman media"
+  ansible.builtin.include_role:
+    name: sys/systemd-automount
+  vars:
+    mount_fs: "{{ proxmox_ctr_virtio_share }}"
+    mount_point: "{{ pm_rsc_dir }}"
+    mount_owner: "{{ pm_host_username }}"
+    mount_group: "{{ storage_groupname }}"
+    mount_mode: '755'
+    mount_type: "virtiofs"

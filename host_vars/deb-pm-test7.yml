@@ -1,6 +1,3 @@
 ---
 podman_containers:
-  - it-tools
-  - bentopdf
-  - linkding
   - audiobookshelf

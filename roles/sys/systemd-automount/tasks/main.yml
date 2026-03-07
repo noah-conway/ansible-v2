@@ -61,7 +61,7 @@
     mode: "0644"
   register: mount_unit_result
 
-- name: "Copying systemd mount unit template"
+- name: "Copying systemd automount unit template"
   become: true
   ansible.builtin.template:
     src: systemd-automount-unit.j2

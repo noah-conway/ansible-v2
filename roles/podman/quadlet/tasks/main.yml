@@ -18,58 +18,21 @@
     dir: "{{ playbook_dir }}/podman_vars/{{ current_container }}"
   when: current_container is defined
 
-- name: debug
-  ansible.builtin.debug:
-    var: current_container
-
 - name: "Assembling facts"
   ansible.builtin.set_fact:
     container_image_full: "{{ container_image }}:{{ container_version_tag }}"
     quadlet_filename: "{{ container_name }}.container"
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ container_image_full }} to {{ quadlet_filename }}"
-
 - name: "Ensuring volume mounts are present on host"
   become: true
   ansible.builtin.file:
     path: "{{ item.host }}"
-    owner: "{{ pm_host_username }}"
-    group: "{{ pm_host_username }}"
     mode: '0755'
+    owner: "{{ pm_host_username }}"
+    group: "{{ item.group | default (pm_host_username) }}"
     state: directory
   loop: "{{ volumes }}"
   when: volumes is defined
-
-- name: "Get UID of {{ pm_host_username }} for systemd user scope"
-  become: false
-  ansible.builtin.getent:
-    database: passwd
-    key: "{{ pm_host_username }}"
-  register: user_info
-
-- name: debug
-  ansible.builtin.debug:
-    var: user_info
-
-# Wait for user runtime directory
-- name: Wait for user runtime directory
-  become: false
-  ansible.builtin.wait_for:
-    path: "/run/user/{{ user_info.ansible_facts.getent_passwd.pm[2] }}"
-    state: present
-    timeout: 60
-
-# Set runtime directory fact
-- name: Set user runtime directory fact
-  become: false
-  ansible.builtin.set_fact:
-    user_runtime_dir: "/run/user/{{ user_info.ansible_facts.getent_passwd.pm[2] }}"
-
-- name: debug
-  ansible.builtin.debug:
-    msg: "Runtime dir: {{ user_runtime_dir }}"
 
 - name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
   become: true
@@ -80,6 +43,15 @@
     owner: "{{ pm_host_username }}" 
     group: "{{ pm_host_username }}"
     mode: '0640'
+  register: qdcpy
+
+- name: "Checking for errors in {{ container_name }} quadlet file"
+  ansible.builtin.command:
+    argv:
+      - /usr/lib/systemd/system-generators/podman-system-generator 
+      - --user
+      - --dryrun
+
 
 # /usr/lib/systemd/system-generators/podman-system-generator --user --dryrun
 
@@ -98,17 +70,18 @@
   become_user: "{{ pm_host_username }}"
   ansible.builtin.systemd_service:
     name: "{{ container_name }}.service"
-    state: started
+    state: restarted
     scope: user
     daemon_reload: true
+  when: qdcpy.changed
 
-#- name: "Allow port on firewalld"
-#  become: true
-#  ansible.posix.firewalld:
-#    zone: public
-#    port: "{{ item.ext }}/{{ item.proto }}"
-#    permanent: true
-#    state: enabled
-#  loop: "{{ publish_ports }}"
-#  notify: 
-#    - reload-firewalld
+- name: "Allow port on firewalld"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    port: "{{ item.ext }}/{{ item.proto }}"
+    permanent: true
+    state: enabled
+  loop: "{{ publish_ports }}"
+  notify: 
+    - reload-firewalld
