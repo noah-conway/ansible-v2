@@ -16,6 +16,7 @@
 - name: "Load container vars file"
   ansible.builtin.include_vars:
     dir: "{{ playbook_dir }}/podman_vars/{{ current_container }}"
+    files_matching: 'main.yml'
   when: current_container is defined
 
 - name: "Assembling facts"
@@ -33,6 +34,17 @@
     state: directory
   loop: "{{ volumes }}"
   when: volumes is defined
+
+- name: "Copying extra files"
+  become: true
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/podman_vars/{{ current_container }}/extra_files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ pm_host_username }}"
+    group: "{{ item.group | default (pm_host_username) }}"
+    mode: '0644'
+  loop: "{{ extra_files }}"
+  when: extra_files is defined
 
 - name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
   become: true
@@ -52,10 +64,8 @@
       - --user
       - --dryrun
 
-
 # /usr/lib/systemd/system-generators/podman-system-generator --user --dryrun
-
-
+#
 #- name: "Daemon-reload"
 #  become: true
 #  become_user: "{{ pm_host_username }}"
