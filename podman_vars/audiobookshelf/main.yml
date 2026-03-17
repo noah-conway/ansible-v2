@@ -1,0 +1,25 @@
+---
+container_name: "audiobookshelf"
+container_image: "ghcr.io/advplyr/audiobookshelf"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 13378
+    int: 80
+    proto: 'tcp'
+
+volumes:
+  - host: "{{ pm_rsc_dir }}/media/audiobooks"
+    ctr: "/audiobooks"
+  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/books"
+    ctr: "/books"
+  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/podcasts"
+    ctr: "/podcasts"
+  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/config"
+    ctr: "/config"
+  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/metadata"
+    ctr: "/metadata"
+
+extra_files:
+  - src: testfile.txt
+    dest: "/home/{{ pm_host_username }}/containers/audiobookshelf/books"
+    

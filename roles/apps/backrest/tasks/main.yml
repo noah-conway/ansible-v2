@@ -8,12 +8,23 @@
     comment: "Backup user for restic and backrest"
     uid_min: '1500'
     create_home: true
-    group: "{{ backrest_user }}"
+
+- name: "Adding backrest user to storage group {{ storage_groupname }}"
+  become: true
+  ansible.builtin.group:
+    name: "{{ backrest_user }}"
     groups: "{{ storage_groupname }}"
     append: true
 
+- name: "Creating backrest dest dir"
+  ansible.builtin.file:
+
+
 # Getting latest release
 - name: "Getting latest backrest release from {{ backrest_latest_url }}"
+  ansible.builtin.get_url:
+    url: "{{ backrest_latest_url }}"
+    dest: 
   
 # Copying latest release to bin
 # Copying systemd service file

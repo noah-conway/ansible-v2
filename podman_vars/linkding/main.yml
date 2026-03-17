@@ -1,0 +1,12 @@
+---
+container_name: "linkding"
+container_image: "ghcr.io/sissbruecker/linkding"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 9393
+    int: 9090
+    proto: 'tcp'
+
+volumes:
+  - host: "/home/{{ pm_host_username }}/containers/linkding"
+    ctr: "/etc/linkding/data"

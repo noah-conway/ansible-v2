@@ -1,0 +1,36 @@
+---
+- name: "Creating restic service user"
+  become: true
+  ansible.builtin.user:
+    name: "{{ restic_user }}"
+    password: "*" # locks the password
+    comment: "Backup user for restic"
+    uid_min: '1500'
+    create_home: true
+
+# defines a storage group, so that the restic user has permissions to back up data owned by this group
+- name: "Creating storage group {{ storage_groupname }}"
+  become: true
+    name: "{{ storage_groupname }}"
+    gid_min: '2000'
+    state: present
+
+- name: "Adding restic user to {{ storage_groupname }}"
+  become: true
+  ansible.builtin.user:
+    name: "{{ restic_user }}"
+    groups: "{{ storage_groupname }}"
+    append: true
+  when: storage_groupname is defined
+
+- name: "Installing restic on debian systems"
+  become: true
+  ansible.builtin.apt:
+    name: restic
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+# copying backup script
+# copying systemd service file
+# copying systemd timer
+
