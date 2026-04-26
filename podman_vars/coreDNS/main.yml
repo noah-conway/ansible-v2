@@ -1,0 +1,17 @@
+---
+container_name: "coreDNS"
+container_image: "coredns/coredns"
+container_version_tag: "1.14.3"
+publish_ports:
+  - ext: 5353
+    int: 53
+    forward: 53
+    proto: 'tcp'
+  - ext: 5353
+    int: 53
+    forward: 53
+    proto: 'udp'
+
+
+
+

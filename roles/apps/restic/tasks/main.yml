@@ -11,6 +11,7 @@
 # defines a storage group, so that the restic user has permissions to back up data owned by this group
 - name: "Creating storage group {{ storage_groupname }}"
   become: true
+  ansible.builtin.group:
     name: "{{ storage_groupname }}"
     gid_min: '2000'
     state: present

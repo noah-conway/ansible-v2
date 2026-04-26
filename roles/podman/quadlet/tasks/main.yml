@@ -67,8 +67,7 @@
 # /usr/lib/systemd/system-generators/podman-system-generator --user --dryrun
 #
 #- name: "Daemon-reload"
-#  become: true
-#  become_user: "{{ pm_host_username }}"
+#  become: true become_user: "{{ pm_host_username }}"
 #  ansible.builtin.systemd_service:
 #    scope: user
 #    daemon_reload: true
@@ -84,6 +83,21 @@
     scope: user
     daemon_reload: true
   when: qdcpy.changed
+
+- name: "Forwarding low-numbered ports with firewalld"
+  become: true
+  ansible.posix.firewalld:
+    zone: public
+    port_forward:
+      - port: "{{ item.ext }}"
+        proto: "{{ item.proto }}"
+        toport: "{{ item.forward }}"
+    permanent: true
+    state: enabled
+  when: item.forward is defined
+  loop:  "{{ publish_ports }}"
+  notify:
+    - reload_firewalld
 
 - name: "Allow port on firewalld"
   become: true
