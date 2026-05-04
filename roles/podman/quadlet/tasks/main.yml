@@ -92,6 +92,7 @@
     name: "{{ container_name }}.service"
     state: restarted
     scope: user
+    enabled: true
     daemon_reload: true
   when: qdcpy.changed
 

@@ -6,13 +6,13 @@ Wants=network-online.target
 [Container]
 ContainerName={{ container_name }}
 Image={{ container_image_full }}
-{% for port in publish_ports %}
+{% for port in publish_ports | default([]) %}
 PublishPort={{ port.ext }}:{{ port.int }}/{{ port.proto }} 
 {% endfor %}
 NoNewPrivileges={{ NoNewPrivileges | default('true') }}
 PidsLimit={{ pids_limit | default('256') }}
 {% for v in volumes | default([]) %}
-Volume={{ v.host }}:{{ v.ctr }}
+Volume={{ v.host }}:{{ v.ctr }}{{ ':' + v.mode if v.mode is defined else '' }}
 {% endfor %}
 {% for e in exec | default([]) %}
 Exec={{ e.cmd }}
