@@ -1,0 +1,31 @@
+---
+container_name: "coredns"
+container_image: "docker.io/coredns/coredns"
+container_version_tag: "1.14.3"
+NoNewPrivileges: "false"
+
+publish_ports:
+  - ext: 5353
+    int: 53
+    forward: 53
+    proto: 'tcp'
+  - ext: 5353
+    int: 53
+    forward: 53
+    proto: 'udp'
+
+volumes:
+  - host: "/home/{{ pm_host_username }}/container/coredns"
+    ctr: "/etc/coredns"
+
+extra_files:
+  - src: Corefile.j2
+    dest: "/home/{{ pm_host_username }}/container/coredns/Corefile"
+  - src: podman_network.zone.j2
+    dest: "/home/{{ pm_host_username }}/container/coredns/Zones/test.local.db"
+
+exec:
+  - cmd: "-conf /etc/coredns/Corefile"
+
+
+

@@ -1,0 +1,11 @@
+$ORIGIN {{ domain }}.
+$TTL 300
+
+@       IN SOA  {{ container_nameserver_hostname }}.{{ domain }}. admin.{{ domain }}. (
+            2026050301 3600 600 86400 300
+)
+
+@       IN NS   {{ container_nameserver_hostname }}.{{ domain }}.
+
+{{ container_nameserver_hostname }}   IN    A   {{ ansible_facts['default_ipv4']['address'] }}
+

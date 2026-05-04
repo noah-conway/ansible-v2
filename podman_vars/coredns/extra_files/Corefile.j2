@@ -1,0 +1,15 @@
+{{ domain }}:53 {
+    # internal mount of coredns zone files
+    file /etc/coredns/Zones/{{ domain }}.db
+    log
+    errors
+}
+
+.:53 {
+    # forward to upstream DNS on router/firewall
+    forward . {{ ansible_facts['default_ipv4']['gateway'] }}
+    log
+    errors
+    cache 120
+}
+
