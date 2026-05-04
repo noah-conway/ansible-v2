@@ -7,16 +7,19 @@ Wants=network-online.target
 ContainerName={{ container_name }}
 Image={{ container_image_full }}
 {% for port in publish_ports %}
-PublishPort={{ port.ext }}:{{ port.int }}
+PublishPort={{ port.ext }}:{{ port.int }}/{{ port.proto }} 
 {% endfor %}
-NoNewPrivileges=true
+NoNewPrivileges={{ NoNewPrivileges | default('true') }}
 PidsLimit={{ pids_limit | default('256') }}
 {% for v in volumes | default([]) %}
 Volume={{ v.host }}:{{ v.ctr }}
 {% endfor %}
+{% for e in exec | default([]) %}
+Exec={{ e.cmd }}
+{% endfor %}
 
 [Service]
-Restart=always
+Restart={{ restart | default('always') }}
 MemoryMax={{ memory_limit | default('1G') }}
 CPUQuota={{ cpu_limit | default('50') }}%
 CPUWeight={{ cpu_weight | default('100') }}
