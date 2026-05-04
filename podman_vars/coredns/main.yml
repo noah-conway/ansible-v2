@@ -17,8 +17,8 @@ publish_ports:
     proto: 'udp'
 
 volumes:
-  - host: "/home/{{ pm_host_username }}/container/coredns"
-    ctr: "/etc/coredns"
+  - ext: "/home/{{ pm_host_username }}/container/coredns"
+    int: "/etc/coredns"
     mode: "ro"
 
 extra_files:
