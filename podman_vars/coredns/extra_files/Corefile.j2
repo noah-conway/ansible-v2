@@ -1,11 +1,11 @@
-{{ domain }}:53 {
+{{ domain }}:{{ coredns_internal_port }} {
     # internal mount of coredns zone files
     file /etc/coredns/Zones/{{ domain }}.db
     log
     errors
 }
 
-.:53 {
+.:{{ coredns_internal_port }} {
     # forward to upstream DNS on router/firewall
     forward . {{ ansible_facts['default_ipv4']['gateway'] }}
     log
