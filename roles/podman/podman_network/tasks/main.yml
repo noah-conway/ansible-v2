@@ -1,0 +1,25 @@
+---
+- name: "Load container vars file"
+  ansible.builtin.include_vars:
+    dir: "{{ playbook_dir }}/podman_vars/networks.d"
+    files_matching: '{{ current_network }}.network.yml'
+  when: current_network is defined
+
+- name: "Copying {{ pm_network_name }} network quadlet into remote quadlet directory"
+  become: true
+  ansible.builtin.template:
+    src: "quadlet.network.j2"
+    dest: "{{ pm_rootless_ctdir }}/{{ current_network }}.network"
+    owner: "{{ pm_host_username }}" 
+    group: "{{ pm_host_username }}"
+    mode: '0640'
+  register: netcpy
+
+- name: "Checking for errors in {{ pm_network_name }} quadlet file"
+  ansible.builtin.command:
+    argv:
+      - /usr/lib/systemd/system-generators/podman-system-generator 
+      - --user
+      - --dryrun
+    
+  
