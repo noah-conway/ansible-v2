@@ -1,0 +1,12 @@
+---
+container_name: "kanboard"
+container_image: "ghcr.io/kanboard/kanboard"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 8654
+    int: 80
+    proto: 'tcp'
+
+volumes:
+  - host: "/home/{{ pm_host_username }}/containers/kanboard/data"
+    ctr: "/var/www/app/data"

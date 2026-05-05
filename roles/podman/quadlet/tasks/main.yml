@@ -19,6 +19,10 @@
     files_matching: 'main.yml'
   when: current_container is defined
 
+- name: "debug"
+  ansible.builtin.debug:
+    msg: "Now installing {{ current_container }}"
+
 - name: "Assembling facts"
   ansible.builtin.set_fact:
     container_image_full: "{{ container_image }}:{{ container_version_tag }}"
@@ -27,13 +31,13 @@
 - name: "Ensuring volume mounts are present on host"
   become: true
   ansible.builtin.file:
-    path: "{{ item.host }}"
+    path: "{{ item.ext }}"
     mode: '0755'
     owner: "{{ pm_host_username }}"
     group: "{{ item.group | default (pm_host_username) }}"
     state: directory
   loop: "{{ volumes }}"
-  when: volumes is defined
+  when: volumes | length > 0
 
 - name: "Creating directories for extra_files, if necessary"
   become: true
@@ -44,7 +48,7 @@
     group: "{{ item.group | default (pm_host_username) }}"
     state: directory
   loop: "{{ extra_files }}"
-  when: extra_files is defined
+  when: extra_files | length > 0
 
 - name: "Copying extra files"
   become: true
@@ -55,7 +59,7 @@
     group: "{{ item.group | default (pm_host_username) }}"
     mode: '0644'
   loop: "{{ extra_files }}"
-  when: extra_files is defined
+  when: extra_files | length > 0
 
 - name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
   become: true
@@ -122,3 +126,10 @@
   loop: "{{ publish_ports }}"
   notify: 
     - reload-firewalld
+
+- name: "Clearing variables"
+  set_fact:
+    extra_files: []
+    volumes: []
+    publish_ports: []
+    exec: []

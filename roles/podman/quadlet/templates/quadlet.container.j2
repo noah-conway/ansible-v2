@@ -12,7 +12,7 @@ PublishPort={{ port.ext }}:{{ port.int }}/{{ port.proto }}
 NoNewPrivileges={{ NoNewPrivileges | default('true') }}
 PidsLimit={{ pids_limit | default('256') }}
 {% for v in volumes | default([]) %}
-Volume={{ v.host }}:{{ v.ctr }}{{ ':' + v.mode if v.mode is defined else '' }}
+Volume={{ v.ext }}:{{ v.int }}{{ ':' + v.mode if v.mode is defined else '' }}
 {% endfor %}
 {% for e in exec | default([]) %}
 Exec={{ e.cmd }}

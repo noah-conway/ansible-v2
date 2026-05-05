@@ -2,9 +2,9 @@
 container_name: "bentopdf"
 container_image: "ghcr.io/alam00000/bentopdf"
 container_version_tag: "latest"
-publish_ports:
-  - ext: 3000
-    int: 8080
-    proto: 'tcp'
+#publish_ports:
+#  - ext: 3000
+#    int: 8080
+#    proto: 'tcp'
 
 
