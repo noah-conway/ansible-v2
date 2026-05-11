@@ -1,0 +1,68 @@
+noah@yoga ~/dev/ansible-v2> git status
+On branch master
+Your branch is up to date with 'origin/
+
+Changes not staged for commit:
+  (use "git add <file>..." to update wh
+)
+  (use "git restore <file>..." to disca
+        modified:   deb-test.yml
+        modified:   host_vars/deb-pm-te
+        modified:   roles/podman/quadle
+        modified:   roles/podman/quadle
+
+Untracked files:
+  (use "git add <file>..." to include i
+n what will be committed)
+        podman_vars/audiobookshelf/
+        podman_vars/linkding/
+        podman_vars/main.yml
+        roles/podman/podman_audit/
+        roles/podman/podman_storage/
+        roles/sys/systemd-automount/
+
+no changes added to commit (use "git ad
+d" and/or "git commit -a")
+noah@yoga ~/dev/ansible-v2> git add deb
+-test.yml host_vars/ roles/ 
+noah@yoga ~/dev/ansible-v2> git commit 
+-m "Generalized systemd-automount role"
+[master 89f587e] Generalized systemd-au
+tomount role
+ 12 files changed, 238 insertions(+), 6
+ deletions(-)
+ create mode 100644 roles/podman/podman
+_audit/tasks/main.yml
+ create mode 100644 roles/podman/podman
+_storage/main.yml
+ create mode 100644 roles/sys/systemd-a
+utomount/defaults/main.yml
+ create mode 100644 roles/sys/systemd-a
+utomount/handlers/main.yml
+ create mode 100644 roles/sys/systemd-a
+utomount/tasks/main.yml
+ create mode 100644 roles/sys/systemd-a
+utomount/tasks/systemd-mount.yml
+ create mode 100644 roles/sys/systemd-a
+utomount/templates/systemd-automount-un
+it.j2
+ create mode 100644 roles/sys/systemd-a
+utomount/templates/systemd-mount-unit.j
+2
+noah@yoga ~/dev/ansible-v2> git push or
+igin master
+Enumerating objects: 40, done.
+Counting objects: 100% (40/40), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (21/21), done
+.
+Writing objects: 100% (29/29), 4.48 KiB
+ | 2.24 MiB/s, done.
+Total 29 (delta 7), reused 0 (delta 0),
+ pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), c
+ompleted with 6 local objects.
+To github.com:noah-conway/ansible-v2.gi
+t
+   20077c7..89f587e  master -> master
+noah@yoga ~/dev/ansible-v2>  
