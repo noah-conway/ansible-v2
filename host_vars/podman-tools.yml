@@ -1,0 +1,5 @@
+---
+podman_containers:
+  - kanboard
+  - coreDNS
+

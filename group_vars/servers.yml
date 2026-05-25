@@ -10,3 +10,10 @@ pm_rsc_dir: "/mnt/container_resources"
 # Group for access to container bulk storage
 storage_groupname: "ctr-storage"
 
+# Container network variables - for podman container hosts
+domain: "test.local"
+pm_network_name: "pnet"
+container_nameserver_hostname: "ns01"
+
+
+
