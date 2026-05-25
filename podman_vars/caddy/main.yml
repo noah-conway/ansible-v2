@@ -1,0 +1,26 @@
+container_name: "caddy"
+container_image: "docker.io/library/caddy"
+container_version_tag: "latest"
+
+publish_ports:
+  - ext: 8080
+    int: 80
+    forward: 80
+    proto: tcp
+  - ext: 4443
+    int: 443
+    forward: 443
+    proto: tcp
+
+volumes:
+  - ext: "{{ pm_proxyfile }}"
+    int: "/etc/caddy/Caddyfile"
+    mode: "ro"
+  - ext: "{{ pm_flash_dir }}/caddy/caddy_data"
+    int: "/data"
+  - ext: "{{ pm_flash_dir }}/caddy/caddy_config"
+    int: "/config"
+
+
+
+  

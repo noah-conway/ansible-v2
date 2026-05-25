@@ -65,6 +65,18 @@
       {{ pm_nameserver_hostname }}   IN    A   {{ ansible_facts['default_ipv4']['address'] }} 
 
 
+- name: "Installing CoreDNS and Caddy quadlets"
+  ansible.builtin.include_role:
+    role: podman/quadlet
+  loop: 
+    - coredns
+    - caddy
+  loop_control:
+    loop_var: infra_nm
+  vars:
+    current_container: "{{ infra_nm }}"
+
+
 
 
 

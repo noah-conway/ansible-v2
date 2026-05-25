@@ -24,8 +24,6 @@ volumes:
 extra_files:
   - src: Corefile.j2
     dest: "/home/{{ pm_host_username }}/container/coredns/Corefile"
-  - src: podman_network.zone.j2
-    dest: "/home/{{ pm_host_username }}/container/coredns/Zones/test.local.db"
 
 exec:
   - cmd: "-conf /etc/coredns/Corefile"

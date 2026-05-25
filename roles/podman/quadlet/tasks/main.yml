@@ -28,6 +28,10 @@
     container_image_full: "{{ container_image }}:{{ container_version_tag }}"
     quadlet_filename: "{{ container_name }}.container"
 
+- name: "debug2"
+  ansible.builtin.debug:
+    msg: "quadlet file {{ quadlet_filename }}"
+
 - name: "Ensuring volume mounts are present on host"
   become: true
   ansible.builtin.file:
