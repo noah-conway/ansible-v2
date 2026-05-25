@@ -30,7 +30,7 @@
 
 - name: "debug2"
   ansible.builtin.debug:
-    msg: "quadlet file {{ quadlet_filename }}"
+    msg: "publish_ports: {{ publish_ports }}"
 
 - name: "Ensuring volume mounts are present on host"
   become: true
