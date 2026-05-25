@@ -1,0 +1,77 @@
+---
+# Creating podman default internal network
+#
+- name: debug_varname
+  ansible.builtin.debug:
+    msg: "{{ pm_default_internal_network }}"
+
+- name: "Creating default podman internal network"
+  ansible.builtin.include_role:
+    name: podman/podman_network
+  vars:
+    current_network: "{{ pm_default_internal_network }}"
+
+- name: "Creating DNS and proxy files | creating parent directories"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0755'
+  loop:
+    - "{{ pm_dnsfile | dirname }}"
+    - "{{ pm_proxyfile | dirname }}"
+
+- name: "Creating DNS and proxy files | checking for existing proxy file"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.stat:
+    path: "{{ pm_proxyfile }}"
+  register: check_proxyfile
+ 
+- name: "Creating DNS and proxy files | creating proxy file if it doesn't exist"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.file:
+    path: "{{ pm_proxyfile }}"
+    state: touch
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0640'
+  when: not check_proxyfile.stat.exists
+
+- name: "Creating DNS and proxy files | adding header to DNS file"
+  become: true
+  become_user: "{{ pm_host_username }}"
+  ansible.builtin.blockinfile:
+    path: "{{ pm_dnsfile }}"
+    create: true
+    insertbefore: "BOF"
+    owner: "{{ pm_host_username }}"
+    group: "{{ pm_host_username }}"
+    mode: '0640'
+    block: |
+      $ORIGIN {{ domain }}.
+      $TTL 300
+
+      @       IN SOA  {{ pm_nameserver_hostname }}.{{ domain }}. admin.{{ domain }}. (
+                  2026050301 3600 600 86400 300
+      )
+
+      @       IN NS   {{ pm_nameserver_hostname }}.{{ domain }}.
+
+      {{ pm_nameserver_hostname }}   IN    A   {{ ansible_facts['default_ipv4']['address'] }} 
+
+
+
+
+
+
+# Creating podman DNS container
+
+
+# Creating podman reverse-proxy container
+
+

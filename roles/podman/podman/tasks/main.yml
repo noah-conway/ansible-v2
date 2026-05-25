@@ -9,7 +9,7 @@
   become: true
   ansible.builtin.user:
     name: "{{ pm_host_username }}"
-    shell: "{{ pm_host_shell | default(omit) }}"
+    shell: "{{ pm_host_shell | default('/bin/bash') }}"
     create_home: true
     comment: "{{ pm_host_usertext | default(omit) }}"
 
@@ -62,12 +62,12 @@
     state: present
   when: ansible_facts['os_family'] == "RedHat"
 
-- name: "Copying podman quadlets from defined podman_containers list"
-  ansible.builtin.include_role:
-    role: podman/quadlet
-  loop: "{{ podman_containers }}"
-  loop_control:
-    loop_var: container_nm
-  vars:
-    current_container: "{{ container_nm }}"
+#- name: "Copying podman quadlets from defined podman_containers list"
+#  ansible.builtin.include_role:
+#    role: podman/quadlet
+#  loop: "{{ podman_containers }}"
+#  loop_control:
+#    loop_var: container_nm
+#  vars:
+#    current_container: "{{ container_nm }}"
 

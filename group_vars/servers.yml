@@ -4,6 +4,11 @@
 pm_host_username: "ctadmin"
 pm_host_usertext: "User to run podman containers"
 pm_rootless_ctdir: "/home/{{ pm_host_username }}/.config/containers/systemd"
+pm_flash_dir: "/home/{{ pm_host_username }}/containers"
+pm_default_internal_network: "podman-def-internal"
+pm_nameserver_hostname: "ns01"
+pm_dnsfile: "{{ pm_flash_dir }}/coredns/Zones/test.local.db"
+pm_proxyfile: "{{ pm_flash_dir }}/caddy/Caddyfile"
 
 proxmox_ctr_virtio_share: "container_share"
 pm_rsc_dir: "/mnt/container_resources"
@@ -12,8 +17,6 @@ storage_groupname: "ctr-storage"
 
 # Container network variables - for podman container hosts
 domain: "test.local"
-pm_network_name: "pnet"
-container_nameserver_hostname: "ns01"
 
 
 

@@ -1,4 +1,8 @@
 ---
+- name: "debug in net role"
+  ansible.builtin.debug:
+    msg: "current: {{ current_network }}"
+
 - name: "Load container vars file"
   ansible.builtin.include_vars:
     dir: "{{ playbook_dir }}/podman_vars/networks.d"

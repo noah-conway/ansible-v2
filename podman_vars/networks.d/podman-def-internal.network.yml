@@ -1,0 +1,2 @@
+---
+pm_network_name: "{{ pm_default_internal_network }}"
