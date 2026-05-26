@@ -17,6 +17,10 @@ Volume={{ v.ext }}:{{ v.int }}{{ ':' + v.mode if v.mode is defined else '' }}
 {% for e in exec | default([]) %}
 Exec={{ e.cmd }}
 {% endfor %}
+Network={{ pm_default_internal_network }}.network
+{% if publish_ports | selectattr('proxy', 'undefined') | list %}
+Network=podman
+{% endif %}
 
 [Service]
 Restart={{ restart | default('always') }}
@@ -25,4 +29,4 @@ CPUQuota={{ cpu_limit | default('50') }}%
 CPUWeight={{ cpu_weight | default('100') }}
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target default.target
