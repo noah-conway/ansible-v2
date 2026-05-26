@@ -1,6 +1,12 @@
 ---
+# Variable "pm_dnsfile" is the zone file for the primary domain - I define this variable in group_vars to be used globally by containers
+# These variables then use {{ pm_dnsfile | dirname | dirname }} to get the base coredns directory, using dirname 2x gives the pm_dnsfile without Zones/zonefile.db
+
+
 # container / service specific variables
+
 coredns_internal_port: 5353
+
 
 container_name: "coredns"
 container_image: "docker.io/coredns/coredns"
@@ -17,13 +23,13 @@ publish_ports:
     proto: 'udp'
 
 volumes:
-  - ext: "/home/{{ pm_host_username }}/container/coredns"
+  - ext: "{{ pm_dnsfile | dirname | dirname }}"
     int: "/etc/coredns"
     mode: "ro"
 
 extra_files:
   - src: Corefile.j2
-    dest: "/home/{{ pm_host_username }}/container/coredns/Corefile"
+    dest: "{{ pm_dnsfile | dirname | dirname }}/Corefile"
 
 exec:
   - cmd: "-conf /etc/coredns/Corefile"

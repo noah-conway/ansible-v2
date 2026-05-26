@@ -30,7 +30,7 @@
 
 - name: "debug2"
   ansible.builtin.debug:
-    msg: "publish_ports: {{ publish_ports }}"
+    msg: "volumes={{ volumes }}, ports={{ publish_ports }}"
 
 - name: "Ensuring volume mounts are present on host"
   become: true
@@ -41,7 +41,7 @@
     group: "{{ item.group | default (pm_host_username) }}"
     state: directory
   loop: "{{ volumes }}"
-  when: volumes | length > 0
+  when: volumes is defined and volumes | length > 0
 
 - name: "Creating directories for extra_files, if necessary"
   become: true
@@ -52,7 +52,7 @@
     group: "{{ item.group | default (pm_host_username) }}"
     state: directory
   loop: "{{ extra_files }}"
-  when: extra_files | length > 0
+  when: extra_files is defined and extra_files | length > 0
 
 - name: "Copying extra files"
   become: true
@@ -63,7 +63,7 @@
     group: "{{ item.group | default (pm_host_username) }}"
     mode: '0644'
   loop: "{{ extra_files }}"
-  when: extra_files | length > 0
+  when: extra_files is defined and extra_files | length > 0
 
 - name: "Copying {{ container_name }} quadlet file template into remote quadlet directory"
   become: true
@@ -131,9 +131,9 @@
   notify: 
     - reload-firewalld
 
-- name: "Clearing variables"
-  set_fact:
-    extra_files: []
-    volumes: []
-    publish_ports: []
-    exec: []
+#- name: "Clearing variables"
+#  ansible.builtin.set_fact:
+#    extra_files: []
+#    volumes: []
+#    publish_ports: []
+#    exec: []

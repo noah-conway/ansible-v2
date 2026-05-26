@@ -8,7 +8,7 @@ pm_flash_dir: "/home/{{ pm_host_username }}/containers"
 pm_default_internal_network: "podman-def-internal"
 pm_nameserver_hostname: "ns01"
 pm_dnsfile: "{{ pm_flash_dir }}/coredns/Zones/test.local.db"
-pm_proxyfile: "{{ pm_flash_dir }}/caddy/Caddyfile"
+pm_proxyfile: "{{ pm_flash_dir }}/caddy/Caddyfile.d/Caddyfile"
 
 proxmox_ctr_virtio_share: "container_share"
 pm_rsc_dir: "/mnt/container_resources"

@@ -13,8 +13,8 @@ publish_ports:
     proto: tcp
 
 volumes:
-  - ext: "{{ pm_proxyfile }}"
-    int: "/etc/caddy/Caddyfile"
+  - ext: "{{ pm_proxyfile | dirname }}"
+    int: "/etc/caddy"
     mode: "ro"
   - ext: "{{ pm_flash_dir }}/caddy/caddy_data"
     int: "/data"

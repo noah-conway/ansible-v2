@@ -1,6 +1,17 @@
 ---
+######## PODMAN INFRASTRUCTURE #########################################
+# Creates base infrastructure before adding "production" containers
+# - Creates an internal podman network for containers
+# - Creates reverse proxy (caddy) and DNS (coredns) containers 
+# - Ensures container storage is initialized
+# - Copies and schedules offsite backup script
+# ######################################################################
+
+
+
+#####################################################
 # Creating podman default internal network
-#
+
 - name: debug_varname
   ansible.builtin.debug:
     msg: "{{ pm_default_internal_network }}"
@@ -10,6 +21,9 @@
     name: podman/podman_network
   vars:
     current_network: "{{ pm_default_internal_network }}"
+
+#####################################################
+# Creating DNS and proxy containers
 
 - name: "Creating DNS and proxy files | creating parent directories"
   become: true
@@ -65,25 +79,24 @@
       {{ pm_nameserver_hostname }}   IN    A   {{ ansible_facts['default_ipv4']['address'] }} 
 
 
+## NOTE: 
+#   vars:
+#     ansible_private_role_vars: true
+# MUST be set in the playbook this role is run in, otherwise the quadlet module won't work!!!!!
+#
 - name: "Installing CoreDNS and Caddy quadlets"
   ansible.builtin.include_role:
-    role: podman/quadlet
+    name: podman/quadlet
   loop: 
-    - coredns
     - caddy
+    - coredns
   loop_control:
     loop_var: infra_nm
   vars:
     current_container: "{{ infra_nm }}"
 
+#####################################################
 
 
-
-
-
-# Creating podman DNS container
-
-
-# Creating podman reverse-proxy container
 
 
