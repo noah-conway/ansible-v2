@@ -8,18 +8,14 @@ publish_ports:
     proto: 'tcp'
 
 volumes:
-  - host: "{{ pm_rsc_dir }}/media/audiobooks"
-    ctr: "/audiobooks"
-  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/books"
-    ctr: "/books"
-  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/podcasts"
-    ctr: "/podcasts"
-  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/config"
-    ctr: "/config"
-  - host: "/home/{{ pm_host_username }}/containers/audiobookshelf/metadata"
-    ctr: "/metadata"
-
-extra_files:
-  - src: testfile.txt
-    dest: "/home/{{ pm_host_username }}/containers/audiobookshelf/books"
+  - ext: "{{ pm_rsc_dir }}/media/audiobooks"
+    int: "/audiobooks"
+  - ext: "/home/{{ pm_host_username }}/containers/audiobookshelf/books"
+    int: "/books"
+  - ext: "/home/{{ pm_host_username }}/containers/audiobookshelf/podcasts"
+    int: "/podcasts"
+  - ext: "/home/{{ pm_host_username }}/containers/audiobookshelf/config"
+    int: "/config"
+  - ext: "/home/{{ pm_host_username }}/containers/audiobookshelf/metadata"
+    int: "/metadata"
     

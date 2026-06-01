@@ -9,5 +9,8 @@
     - role: base/deb-base
     - role: sec/firewalld
     - role: podman/podman
-    - role: podman/podman_infra
+#    - role: podman/podman_infra
+    - role: podman/podman_storage
+    - role: podman/podman_main
+
 
