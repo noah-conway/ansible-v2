@@ -1,0 +1,11 @@
+---
+container_name: "actualbudget"
+container_image: "ghcr.io/actualbudget/actual"
+container_version_tag: "latest"
+publish_ports:
+  - ext: 5006
+    int: 5006
+    proto: "tcp"
+
+volumes:
+  - host: "{{ pm_flash_dir }}/actualbudget/data"
