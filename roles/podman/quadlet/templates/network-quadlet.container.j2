@@ -1,0 +1,32 @@
+[Unit]
+Description={{ container_name }} podman container
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+ContainerName={{ container_name }}
+Image={{ container_image_full }}
+{% for port in publish_ports | default([]) %}
+PublishPort={{ port.ext }}:{{ port.int }}/{{ port.proto }} 
+{% endfor %}
+NoNewPrivileges={{ NoNewPrivileges | default('true') }}
+PidsLimit={{ pids_limit | default('256') }}
+{% for v in volumes | default([]) %}
+Volume={{ v.ext }}:{{ v.int }}{{ ':' + v.mode if v.mode is defined else '' }}
+{% endfor %}
+{% for e in exec | default([]) %}
+Exec={{ e.cmd }}
+{% endfor %}
+Network={{ pm_default_internal_network }}.network
+{% if publish_ports | selectattr('proxy', 'undefined') | list %}
+Network=podman
+{% endif %}
+
+[Service]
+Restart={{ restart | default('always') }}
+MemoryMax={{ memory_limit | default('1G') }}
+CPUQuota={{ cpu_limit | default('50') }}%
+CPUWeight={{ cpu_weight | default('100') }}
+
+[Install]
+WantedBy=multi-user.target default.target
