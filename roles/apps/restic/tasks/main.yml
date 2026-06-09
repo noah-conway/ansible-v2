@@ -1,37 +1,78 @@
 ---
-- name: "Creating restic service user"
-  become: true
-  ansible.builtin.user:
-    name: "{{ restic_user }}"
-    password: "*" # locks the password
-    comment: "Backup user for restic"
-    uid_min: '1500'
-    create_home: true
-
-# defines a storage group, so that the restic user has permissions to back up data owned by this group
-- name: "Creating storage group {{ storage_groupname }}"
-  become: true
-  ansible.builtin.group:
-    name: "{{ storage_groupname }}"
-    gid_min: '2000'
-    state: present
-
-- name: "Adding restic user to {{ storage_groupname }}"
-  become: true
-  ansible.builtin.user:
-    name: "{{ restic_user }}"
-    groups: "{{ storage_groupname }}"
-    append: true
-  when: storage_groupname is defined
-
-- name: "Installing restic on debian systems"
+- name: "Installing restic and git on debian systems"
   become: true
   ansible.builtin.apt:
-    name: restic
+    name: 
+      - restic
+      - git
     state: present
   when: ansible_facts['os_family'] == "Debian"
 
-# copying backup script
-# copying systemd service file
-# copying systemd timer
+- name: "Cloning git repo"
+  become: true
+  ansible.builtin.git:
+    repo: "{{ script_repo_url }}"
+    dest: "{{ script_repo_dest }}"
+    version: "main"
+    force: true
+
+- name: "Ensuring script is executable"
+  become: true
+  ansible.builtin.file:
+    path: "{{ script_path }}"
+    mode: '0700'
+    owner: 'root'
+    group: 'root'
+
+- name: "Ensuring cache directory is present"
+  become: true
+  ansible.builtin.file:
+    path: "{{ restic_cache }}"
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
+
+- name: "Copying restic .env file"
+  become: true
+  ansible.builtin.template:
+    src: "restic-b2.env.j2"
+    dest: "{{ env_file_path }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: "Ensuring .env path is correct in script"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "{{ script_path }}"
+    line: 'readonly ENV_FILE="{{ env_file_path }}"'
+    state: present
+    create: false
+
+- name: "Create systemd service unit file"
+  become: true
+  ansible.builtin.template:
+    src: "restic-b2.service.j2"
+    dest: "/etc/systemd/system/restic-b2.service"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: "Create systemd timer file"
+  become: true
+  ansible.builtin.template:
+    src: "restic-b2.timer.j2"
+    dest: "/etc/systemd/system/restic-b2.timer"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: "Daemon-reload, enable, and start systemd timer"
+  become: true
+  ansible.builtin.systemd_service:
+    name: "restic-b2.timer"
+    enabled: true
+    state: started
+    daemon_reload: true
+  
 
