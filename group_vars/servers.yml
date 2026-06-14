@@ -10,7 +10,7 @@ pm_nameserver_hostname: "ns01"
 pm_dnsfile: "{{ pm_flash_dir }}/coredns/Zones/test.local.db"
 pm_proxyfile: "{{ pm_flash_dir }}/caddy/Caddyfile.d/Caddyfile"
 
-proxmox_ctr_virtio_share: "container_share"
+proxmox_ctr_virtio_share: "container_share2"
 pm_rsc_dir: "/mnt/container_resources"
 # Group for access to container bulk storage
 storage_groupname: "ctr-storage"
