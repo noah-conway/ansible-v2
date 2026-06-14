@@ -8,4 +8,8 @@ publish_ports:
     proto: "tcp"
 
 volumes:
-  - host: "{{ pm_flash_dir }}/actualbudget/data"
+  - ext: "{{ pm_flash_dir }}/actualbudget/data"
+    int: "/data"
+
+
+
